@@ -74,20 +74,10 @@ jvalue = Y .* log(a_three) + (1 - Y) .* log(1 - a_three);
 
 J = (-1 / m) * sum(sum(jvalue));
 
+theta1 = Theta1.*Theta1;
+theta2 = Theta2.*Theta2;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+J = J + (lambda / (2 * m)) * sum(sum(theta1)) + sum(sum(theta2));
 
 
 % -------------------------------------------------------------
