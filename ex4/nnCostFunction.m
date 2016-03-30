@@ -74,10 +74,17 @@ jvalue = Y .* log(a_three) + (1 - Y) .* log(1 - a_three);
 
 J = (-1 / m) * sum(sum(jvalue));
 
-theta1 = Theta1.*Theta1;
-theta2 = Theta2.*Theta2;
+%theta1_bias = [ones(25,1) Theta1];
+%theta2_bias = [ones(10,1) Theta2];
+theta1_bias = Theta1(:, 2:end);
+theta2_bias = Theta2(:, 2:end);
 
-J = J + (lambda / (2 * m)) * sum(sum(theta1)) + sum(sum(theta2));
+theta1_sum = sum(sum(theta1_bias .^2));
+theta2_sum = sum(sum(theta2_bias .^2));
+
+J = (-1 / m) * sum(sum(jvalue)) + (lambda / (2 * m)) * (theta1_sum + theta2_sum);
+
+
 % -------------------------------------------------------------
 
 % =========================================================================
