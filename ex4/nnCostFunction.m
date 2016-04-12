@@ -74,8 +74,6 @@ jvalue = Y .* log(a_three) + (1 - Y) .* log(1 - a_three);
 
 J = (-1 / m) * sum(sum(jvalue));
 
-%theta1_bias = [ones(25,1) Theta1];
-%theta2_bias = [ones(10,1) Theta2];
 theta1_bias = Theta1(:, 2:end);
 theta2_bias = Theta2(:, 2:end);
 
@@ -83,6 +81,37 @@ theta1_sum = sum(sum(theta1_bias .^2));
 theta2_sum = sum(sum(theta2_bias .^2));
 
 J = (-1 / m) * sum(sum(jvalue)) + (lambda / (2 * m)) * (theta1_sum + theta2_sum);
+
+%part2
+%yベクトルのバイナリ化
+Y = repmat([1:num_labels], m, 1) == repmat(y, 1, num_labels);
+
+delta1 = zeros(size(Theta1));
+delta2 = zeros(size(Theta2));
+
+for t = 1:m,
+
+	h1t = a_three(t, :)';
+	a1t = a_one(t,:)';
+	a2t = a_two(t, :)';
+	Yt = Y(t, :)';
+
+	d3t = h1t - Yt;
+	z2t = [1; Theta1 * a1t];
+    d2t = Theta2' * d3t .* sigmoidGradient(z2t);
+
+    delta1 = delta1 + d2t(2:end) * a1t';
+    delta2 = delta2 + d3t * a2t';
+end;
+
+Theta1_grad = (1 / m) * delta1;
+Theta2_grad = (1 / m) * delta2;
+
+% solution for gradient regularization
+Theta1ZeroedBias = [ zeros(size(Theta1, 1), 1) theta1_bias ];
+Theta2ZeroedBias = [ zeros(size(Theta2, 1), 1) theta2_bias ];
+Theta1_grad = (1 / m) * delta1 + (lambda / m) * Theta1ZeroedBias;
+Theta2_grad = (1 / m) * delta2 + (lambda / m) * Theta2ZeroedBias;
 
 
 % -------------------------------------------------------------
